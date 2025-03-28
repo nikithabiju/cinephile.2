@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #141414;
+            color: white;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+
+        .header {
+            padding: 20px 40px;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            color: #87CEEB;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #87CEEB;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #87CEEB;
+        }
+
+        .content {
+            padding: 100px 20px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .profile-section img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #87CEEB;
+        }
+
+        .profile-info h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .profile-info p {
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .profile-actions a {
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .watchlist-btn {
+            background: #87CEEB;
+            color: white;
+        }
+
+        .watchlist-btn:hover {
+            background: #5F9EA0;
+        }
+
+        .edit-profile-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+        }
+
+        .edit-profile-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #cc0000;
+        }
+
+        .recommendations-section {
+            margin-top: 40px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding: 0 20px;
+            color: #87CEEB;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .movie-card {
+            position: relative;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.05);
+            z-index: 2;
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .movie-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 10px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            border-radius: 0 0 4px 4px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .movie-card:hover .movie-info {
+            opacity: 1;
+            background: rgba(135, 206, 235, 0.9);
+        }
+
+        .movie-title {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #000;
+        }
+
+        .movie-rating {
+            font-size: 0.9rem;
+            color: #000;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .error {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #ff4444;
+        }
+
+        .reviews-btn {
+            background: #87CEEB;
+            color: white;
+        }
+
+        .reviews-btn:hover {
+            background: #5F9EA0;
+        }
+
+        .latest-reviews-section {
+            margin-top: 40px;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .review-movie {
+            position: relative;
+            height: 200px;
+        }
+
+        .review-movie img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .review-movie-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 10px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+        }
+
+        .review-movie-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .review-content {
+            padding: 15px;
+        }
+
+        .review-rating {
+            color: #87CEEB;
+            margin-bottom: 10px;
+        }
+
+        .review-text {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .review-date {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .review-author {
+            color: #87CEEB;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .profile-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-actions {
+                justify-content: center;
+            }
+
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .movie-card img {
+                height: 225px;
+            }
+
+            .reviews-grid {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Cinephile</h1>
+        <div class="nav-links">
+            <a href="dashboard.html">Home</a>
+            <a href="watchlist.html">My Watchlist</a>
+            <a href="profile.html">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profile" class="profile-icon">
+            </a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="profile-section">
+            <img id="profileAvatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profile">
+            <div class="profile-info">
+                <h2 id="profileUsername">John Doe</h2>
+                <p>Movie Enthusiast</p>
+                <div class="profile-actions">
+                    <a href="watchlist.html" class="watchlist-btn">View Watchlist</a>
+                    <a href="user-reviews.html" class="reviews-btn">My Reviews</a>
+                    <a href="edit-profile.html" class="edit-profile-btn">Edit Profile</a>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="latest-reviews-section">
+            <h2 class="section-title">Latest Reviews</h2>
+            <div class="loading">Loading reviews...</div>
+            <div class="error"></div>
+            <div class="reviews-grid" id="latestReviewsGrid">
+                <!-- Latest reviews will be inserted here -->
+            </div>
+        </div>
+
+        <div class="recommendations-section">
+            <h2 class="section-title">Recommended for You</h2>
+            <div class="loading">Loading recommendations...</div>
+            <div class="error"></div>
+            <div class="movie-grid" id="recommendationsGrid">
+                <!-- Movies will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBwLRRKIwsSPmvFXnDn5UcweXli12w1Qr0",
+            authDomain: "cinephile-250fc.firebaseapp.com",
+            databaseURL: "https://cinephile-250fc-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "cinephile-250fc",
+            storageBucket: "cinephile-250fc.firebasestorage.app",
+            messagingSenderId: "995080104071",
+            appId: "1:995080104071:web:150cd3e9f3d8a905097022",
+            measurementId: "G-QX66DDM9ZD"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        // Function to handle logout
+        function logout() {
+            auth.signOut().then(() => {
+                // Clear user data from localStorage
+                localStorage.removeItem('user');
+                // Redirect to login page
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+                alert('Failed to logout. Please try again.');
+            });
+        }
+
+        // Check authentication state
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Update profile information
+            const profileName = document.getElementById('profileName');
+            const profileEmail = document.getElementById('profileEmail');
+            const profileAvatar = document.getElementById('profileAvatar');
+
+            profileName.textContent = user.displayName || user.email.split('@')[0];
+            profileEmail.textContent = user.email;
+            profileAvatar.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`;
+
+            // Load user's watchlist
+            loadWatchlist();
+        });
+
+        // Rest of your existing code...
+        const API_KEY = "d8f50a3371afc220d8657c2416c8514b";
+        const IMAGE_URL = "https://image.tmdb.org/t/p/w500";
+
+        // Get user data from localStorage
+        const user = JSON.parse(localStorage.getItem('user')) || {
+            username: 'John Doe',
+            avatarSeed: 'Felix'
+        };
+
+        // Function to format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Function to create review card
+        function createReviewCard(review) {
+            return `
+                <div class="review-card">
+                    <div class="review-movie">
+                        <img src="${IMAGE_URL}${review.poster_path}" alt="${review.movieTitle}">
+                        <div class="review-movie-overlay">
+                            <div class="review-movie-title">${review.movieTitle}</div>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        <div class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}</div>
+                        <div class="review-text">${review.text}</div>
+                        <div class="review-date">${formatDate(review.date)}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Function to load user's watchlist
+        function loadWatchlist() {
+            const watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
+            const watchlistCount = document.getElementById('watchlistCount');
+            if (watchlistCount) {
+                watchlistCount.textContent = watchlist.length;
+            }
+        }
+
+        // Function to load latest reviews
+        function loadLatestReviews() {
+            const currentUser = auth.currentUser;
+            if (!currentUser) return;
+
+            const reviewsRef = db.ref('reviews');
+            reviewsRef.on('value', (snapshot) => {
+                const reviews = [];
+                snapshot.forEach((movieSnapshot) => {
+                    movieSnapshot.forEach((reviewSnapshot) => {
+                        const review = reviewSnapshot.val();
+                        if (review.userId === currentUser.uid) {
+                            reviews.push({
+                                ...review,
+                                movieId: movieSnapshot.key,
+                                reviewId: reviewSnapshot.key
+                            });
+                        }
+                    });
+                });
+
+                // Sort reviews by date (newest first)
+                reviews.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                // Display latest 3 reviews
+                const latestReviewsContainer = document.getElementById('latestReviews');
+                if (latestReviewsContainer) {
+                    if (reviews.length === 0) {
+                        latestReviewsContainer.innerHTML = '<p>No reviews yet</p>';
+                    } else {
+                        latestReviewsContainer.innerHTML = reviews
+                            .slice(0, 3)
+                            .map(review => createReviewCard(review))
+                            .join('');
+                    }
+                }
+            });
+        }
+
+        // Function to get recommended movies
+        async function getRecommendedMovies() {
+            const watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
+            const recommendedContainer = document.getElementById('recommendedMovies');
+            
+            if (!recommendedContainer) return;
+
+            if (watchlist.length === 0) {
+                // If no watchlist, show trending movies
+                try {
+                    const response = await fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}&language=en-US`);
+                    const data = await response.json();
+                    displayMovies(data.results.slice(0, 6), recommendedContainer);
+                } catch (error) {
+                    console.error('Error fetching trending movies:', error);
+                }
+            } else {
+                // Get recommendations based on watchlist
+                try {
+                    const movieIds = watchlist.map(movie => movie.id).join(',');
+                    const response = await fetch(`https://api.themoviedb.org/3/movie/${movieIds}/recommendations?api_key=${API_KEY}&language=en-US`);
+                    const data = await response.json();
+                    displayMovies(data.results.slice(0, 6), recommendedContainer);
+                } catch (error) {
+                    console.error('Error fetching recommended movies:', error);
+                }
+            }
+        }
+
+        // Function to display movies
+        function displayMovies(movies, container) {
+            container.innerHTML = movies.map(movie => `
+                <div class="movie-card" onclick="window.location.href='movie-details.html?id=${movie.id}'">
+                    <img src="${IMAGE_URL}${movie.poster_path}" alt="${movie.title}">
+                    <div class="movie-info">
+                        <div class="movie-title">${movie.title}</div>
+                        <div class="movie-rating">⭐ ${movie.vote_average.toFixed(1)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load data when page loads
+        loadWatchlist();
+        getRecommendedMovies();
+        loadLatestReviews();
+    </script>
+</body>
+</html>
